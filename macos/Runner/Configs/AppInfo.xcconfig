@@ -8,7 +8,7 @@
 PRODUCT_NAME = lets_blog
 
 // The application's bundle identifier
-PRODUCT_BUNDLE_IDENTIFIER = me.dungngminh.letsBlog
+PRODUCT_BUNDLE_IDENTIFIER = me.dungngminh.lets_blog
 
 // The copyright displayed in application information
 PRODUCT_COPYRIGHT = Copyright © 2024 me.dungngminh. All rights reserved.
