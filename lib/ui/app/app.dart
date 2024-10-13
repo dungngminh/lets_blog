@@ -33,7 +33,11 @@ class AppView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp.router(
-      routerConfig: _appRouter.config(),
+      routerConfig: _appRouter.config(
+        navigatorObservers: () => [
+          AppRouterObserver(),
+        ],
+      ),
       debugShowCheckedModeBanner: false,
       title: "Let's Blog",
       theme: FlexThemeData.light(scheme: FlexScheme.purpleM3),
