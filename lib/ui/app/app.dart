@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:lets_blog/l10n/l10n.dart';
 import 'package:lets_blog/ui/app/bloc/theme/theme_bloc.dart';
 import 'package:lets_blog/ui/app/bloc/user_session/user_session_bloc.dart';
+import 'package:lets_blog/ui/app_router.dart';
 
 class App extends StatelessWidget {
   const App({super.key});
@@ -19,24 +20,25 @@ class App extends StatelessWidget {
           create: (context) => UserSessionBloc(),
         ),
       ],
-      child: const AppView(),
+      child: AppView(),
     );
   }
 }
 
 class AppView extends StatelessWidget {
-  const AppView({super.key});
+  AppView({super.key});
+
+  final _appRouter = AppRouter();
 
   @override
   Widget build(BuildContext context) {
-    
     return MaterialApp.router(
+      routerConfig: _appRouter.config(),
       debugShowCheckedModeBanner: false,
       title: "Let's Blog",
       theme: FlexThemeData.light(scheme: FlexScheme.purpleM3),
       darkTheme: FlexThemeData.dark(scheme: FlexScheme.purpleM3),
       localizationsDelegates: AppLocalizations.localizationsDelegates,
-      
       supportedLocales: AppLocalizations.supportedLocales,
     );
   }
