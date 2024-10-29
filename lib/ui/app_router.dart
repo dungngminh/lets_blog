@@ -6,6 +6,7 @@ import 'package:lets_blog/ui/app_router.gr.dart';
 
 @AutoRouterConfig()
 class AppRouter extends RootStackRouter {
+
   @override
   List<AutoRoute> get routes => [
         AutoRoute(page: SplashRoute.page, initial: true),
@@ -24,15 +25,13 @@ class AppRouter extends RootStackRouter {
       ];
 }
 
-
 class AppRouterObserver extends AutoRouterObserver {
-
   @override
   void didPush(Route route, Route? previousRoute) {
     log('New route pushed: ${route.settings.name}', name: 'AppRouter');
   }
 
- // only override to observer tab routes
+  // only override to observer tab routes
   @override
   void didInitTabRoute(TabPageRoute route, TabPageRoute? previousRoute) {
     log('Tab route visited: ${route.name}', name: 'AppRouter');

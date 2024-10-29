@@ -1,4 +1,13 @@
 {
   "@@locale": "en",
-  "appTitle": "Let''s Blog"
+  "appTitle": "Let''s Blog",
+  "homeLabel": "Home",
+  "searchLabel": "Search",
+  "favoritesLabel": "Favorites",
+  "profileLabel": "Profile",
+  "settingsLabel": "Settings",
+  "goodMorningLabel": "Good Morning",
+  "goodAfternoonLabel": "Good Afternoon",
+  "goodEveningLabel": "Good Evening",
+  "createPostLabel": "Create Post"
 }
