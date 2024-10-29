@@ -1,9 +1,12 @@
 import 'package:auto_route/auto_route.dart';
+import 'package:awesome_extensions/awesome_extensions.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:gap/gap.dart';
+import 'package:lets_blog/commons/types/errors/auth_error.dart';
 import 'package:lets_blog/commons/types/validator.dart';
 import 'package:lets_blog/di/di.dart';
+import 'package:lets_blog/l10n/l10n.dart';
 import 'package:lets_blog/ui/app/bloc/user_session/user_session_bloc.dart';
 import 'package:lets_blog/ui/app_router.gr.dart';
 import 'package:lets_blog/ui/auth/login/bloc/login_bloc.dart';
@@ -23,6 +26,7 @@ class LoginPage extends StatelessWidget {
         onRegisterPressed: () {
           context.router.push(const RegisterRoute());
         },
+        onForgotPasswordPressed: () {},
       ),
     );
   }
@@ -33,10 +37,12 @@ class LoginView extends StatefulWidget {
     super.key,
     required this.onAuthSuccess,
     required this.onRegisterPressed,
+    required this.onForgotPasswordPressed,
   });
 
   final VoidCallback onAuthSuccess;
   final VoidCallback onRegisterPressed;
+  final VoidCallback onForgotPasswordPressed;
 
   @override
   State<LoginView> createState() => _LoginViewState();
@@ -75,12 +81,35 @@ class _LoginViewState extends State<LoginView> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocListener<UserSessionBloc, UserSessionState>(
-      listener: (context, state) {
-        if (state is UserSessionAuthenticated) {
-          widget.onAuthSuccess();
-        }
-      },
+    return MultiBlocListener(
+      listeners: [
+        BlocListener<UserSessionBloc, UserSessionState>(
+          listener: (context, state) {
+            if (state is UserSessionAuthenticated) {
+              widget.onAuthSuccess();
+            }
+          },
+        ),
+        BlocListener<LoginBloc, LoginState>(
+          listenWhen: (previous, current) {
+            return previous.error != current.error;
+          },
+          listener: (context, state) {
+            if (!state.isError) return;
+            context.showSnackBar(
+              message: switch (state.error) {
+                UserNotFound() => context.l10n.userNotFoundErrorLabel,
+                InvalidCredentials() =>
+                  context.l10n.invalidCredentialsErrorLabel,
+                UserPasswordMismatch() =>
+                  context.l10n.passwordIncorrectErrorLabel,
+                _ => context.l10n.unexpectedErrorLabel,
+              },
+              backgroundColor: context.theme.colorScheme.error,
+            );
+          },
+        ),
+      ],
       child: Scaffold(
         body: SafeArea(
           child: Padding(
@@ -88,36 +117,72 @@ class _LoginViewState extends State<LoginView> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Builder(
-                  builder: (context) {
-                    final email = context.select(
-                      (LoginBloc bloc) => bloc.state.email,
-                    );
-                    return TextFormField(
-                      controller: _emailController,
-                      textInputAction: TextInputAction.next,
-                      decoration: InputDecoration(
-                        border: const OutlineInputBorder(),
-                        errorText: email.mapErrorOrNull((e) {
-                          return switch (e) {
-                            ValueEmpty() => 'Value cannot be empty',
-                            EmailInvalidFormat() => 'Email is invalid',
-                            _ => null,
-                          };
-                        }),
-                      ),
-                    );
-                  },
-                ),
+                const Spacer(),
+                _buildEmailField(),
                 const Gap(16),
                 _buildPasswordField(),
+                const Gap(12),
+                _buildForgorPasswordButton(),
                 const Gap(24),
                 _buildLoginButton(),
+                const Spacer(),
+                _buildSignupButton(),
               ],
             ),
           ),
         ),
       ),
+    );
+  }
+
+  Widget _buildSignupButton() {
+    return Center(
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Text(context.l10n.newToLetsBlogLabel),
+          TextButton(
+            onPressed: widget.onRegisterPressed,
+            child: Text(context.l10n.signUpLabel),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildForgorPasswordButton() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.end,
+      children: [
+        TextButton(
+          onPressed: widget.onRegisterPressed,
+          child: Text(context.l10n.forgotPasswordLabel),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildEmailField() {
+    return Builder(
+      builder: (context) {
+        final email = context.select(
+          (LoginBloc bloc) => bloc.state.email,
+        );
+        return TextFormField(
+          controller: _emailController,
+          textInputAction: TextInputAction.next,
+          decoration: InputDecoration(
+            border: const OutlineInputBorder(),
+            errorText: email.mapErrorOrNull((e) {
+              return switch (e) {
+                ValueEmpty() => context.l10n.emailNotEmptyLabel,
+                EmailInvalidFormat() => context.l10n.emailNotValidLabel,
+                _ => null,
+              };
+            }),
+          ),
+        );
+      },
     );
   }
 
@@ -135,8 +200,8 @@ class _LoginViewState extends State<LoginView> {
             border: const OutlineInputBorder(),
             errorText: password.mapErrorOrNull((e) {
               return switch (e) {
-                ValueEmpty() => 'Value cannot be empty',
-                PasswordTooShort() => 'Password is too short',
+                ValueEmpty() => context.l10n.passwordNotEmptyLabel,
+                PasswordTooShort() => context.l10n.passwordTooShortLabel,
                 _ => null,
               };
             }),
@@ -155,13 +220,21 @@ class _LoginViewState extends State<LoginView> {
         final isFormValid = context.select(
           (LoginBloc bloc) => bloc.state.isFormValid,
         );
+        final isLoading = context.select(
+          (LoginBloc bloc) => bloc.state.isLoading,
+        );
+        if (isLoading) {
+          return const Center(
+            child: CircularProgressIndicator(),
+          );
+        }
         return FilledButton(
           onPressed: !isFormValid
               ? null
               : () {
                   context.read<LoginBloc>().add(const LoginSubmitted());
                 },
-          child: const Text('Login'),
+          child: Text(context.l10n.loginLabel),
         );
       },
     );

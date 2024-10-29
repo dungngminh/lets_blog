@@ -9,5 +9,17 @@
   "goodMorningLabel": "Good Morning",
   "goodAfternoonLabel": "Good Afternoon",
   "goodEveningLabel": "Good Evening",
-  "createPostLabel": "Create Post"
+  "createPostLabel": "Create Post",
+  "passwordTooShortLabel": "Password must be at least 8 characters",
+  "passwordNotEmptyLabel": "Password cannot be empty",
+  "emailNotValidLabel": "Email is not valid",
+  "emailNotEmptyLabel": "Email cannot be empty",
+  "forgotPasswordLabel": "Forgot Password?",
+  "newToLetsBlogLabel": "New to Let's Blog?",
+  "signUpLabel": "Sign Up",
+  "loginLabel": "Login",
+  "userNotFoundErrorLabel": "User not found, please sign up",
+  "passwordIncorrectErrorLabel": "Password is incorrect, please try again",
+  "invalidCredentialsErrorLabel": "Email or password is incorrect, please try again",
+  "unexpectedErrorLabel": "An unexpected error occurred, please try again"
 }
