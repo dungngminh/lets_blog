@@ -4,12 +4,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:gap/gap.dart';
 import 'package:lets_blog/commons/types/errors/auth_error.dart';
-import 'package:lets_blog/commons/types/validator.dart';
+import 'package:lets_blog/commons/types/validators/app_validator.dart';
+import 'package:lets_blog/commons/types/validators/validator.dart';
 import 'package:lets_blog/di/di.dart';
 import 'package:lets_blog/l10n/l10n.dart';
 import 'package:lets_blog/ui/app/bloc/user_session/user_session_bloc.dart';
 import 'package:lets_blog/ui/app_router.gr.dart';
 import 'package:lets_blog/ui/auth/login/bloc/login_bloc.dart';
+import 'package:phosphor_flutter/phosphor_flutter.dart';
 
 @RoutePage()
 class LoginPage extends StatelessWidget {
@@ -86,6 +88,10 @@ class _LoginViewState extends State<LoginView> {
         BlocListener<UserSessionBloc, UserSessionState>(
           listener: (context, state) {
             if (state is UserSessionAuthenticated) {
+              final user = state.user;
+              context.showSnackBar(
+                message: context.l10n.helloUserLabel(user.email),
+              );
               widget.onAuthSuccess();
             }
           },
@@ -142,7 +148,10 @@ class _LoginViewState extends State<LoginView> {
         children: [
           Text(context.l10n.newToLetsBlogLabel),
           TextButton(
-            onPressed: widget.onRegisterPressed,
+            onPressed: () {
+              FocusManager.instance.primaryFocus?.unfocus();
+              widget.onRegisterPressed();
+            },
             child: Text(context.l10n.signUpLabel),
           ),
         ],
@@ -173,6 +182,8 @@ class _LoginViewState extends State<LoginView> {
           textInputAction: TextInputAction.next,
           decoration: InputDecoration(
             border: const OutlineInputBorder(),
+            labelText: context.l10n.emailLabel,
+            hintText: context.l10n.inputYourEmailLabel,
             errorText: email.mapErrorOrNull((e) {
               return switch (e) {
                 ValueEmpty() => context.l10n.emailNotEmptyLabel,
@@ -192,12 +203,27 @@ class _LoginViewState extends State<LoginView> {
         final password = context.select(
           (LoginBloc bloc) => bloc.state.password,
         );
+        final hidePassword = context.select(
+          (LoginBloc bloc) => bloc.state.hidePassword,
+        );
         return TextFormField(
-          obscureText: true,
+          obscureText: hidePassword,
           controller: _passwordController,
           textInputAction: TextInputAction.done,
           decoration: InputDecoration(
             border: const OutlineInputBorder(),
+            suffixIcon: IconButton(
+              icon: hidePassword
+                  ? const PhosphorIcon(PhosphorIconsRegular.eyeClosed)
+                  : const PhosphorIcon(PhosphorIconsRegular.eye),
+              onPressed: () {
+                context
+                    .read<LoginBloc>()
+                    .add(const LoginTogglePasswordVisibility());
+              },
+            ),
+            labelText: context.l10n.passwordLabel,
+            hintText: context.l10n.inputYourPasswordLabel,
             errorText: password.mapErrorOrNull((e) {
               return switch (e) {
                 ValueEmpty() => context.l10n.passwordNotEmptyLabel,

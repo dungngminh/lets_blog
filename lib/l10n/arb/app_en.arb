@@ -21,5 +21,22 @@
   "userNotFoundErrorLabel": "User not found, please sign up",
   "passwordIncorrectErrorLabel": "Password is incorrect, please try again",
   "invalidCredentialsErrorLabel": "Email or password is incorrect, please try again",
-  "unexpectedErrorLabel": "An unexpected error occurred, please try again"
+  "unexpectedErrorLabel": "An unexpected error occurred, please try again",
+  "emailLabel": "Email",
+  "passwordLabel": "Password",
+  "inputYourEmailLabel": "Input your email",
+  "inputYourPasswordLabel": "Input your password",
+  "helloUserLabel": "Hello, {user}",
+  "@helloUserLabel": {
+    "placeholders": {
+      "user": {
+        "type": "String"
+      }
+    }
+  },
+  "nameLabel": "Name",
+  "inputYourNameLabel": "Input your name",
+  "nameNotEmptyLabel": "Name cannot be empty",
+  "registerSuccessLabel": "Register successfully",
+  "userExistsErrorLabel": "User already exists, please try again"
 }

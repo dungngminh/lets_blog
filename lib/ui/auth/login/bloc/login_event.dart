@@ -29,4 +29,6 @@ class LoginSubmitted extends LoginEvent {
   const LoginSubmitted();
 }
 
-
+class LoginTogglePasswordVisibility extends LoginEvent {
+  const LoginTogglePasswordVisibility();
+}

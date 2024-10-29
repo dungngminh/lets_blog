@@ -1,11 +1,14 @@
 import 'package:awesome_extensions/awesome_extensions.dart';
 import 'package:bloc/bloc.dart';
+import 'package:copy_with_extension/copy_with_extension.dart';
 import 'package:equatable/equatable.dart';
 import 'package:lets_blog/commons/const.dart';
 import 'package:lets_blog/commons/types/errors/app_error.dart';
-import 'package:lets_blog/commons/types/validator.dart';
+import 'package:lets_blog/commons/types/validators/app_validator.dart';
+import 'package:lets_blog/commons/types/validators/validator.dart';
 import 'package:lets_blog/domain/repositories/auth_repository.dart';
 
+part 'login_bloc.g.dart';
 part 'login_event.dart';
 part 'login_state.dart';
 
@@ -17,6 +20,11 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
     on<LoginEmailChanged>(_onEmailChanged);
     on<LoginPasswordChanged>(_onPasswordChanged);
     on<LoginSubmitted>(_onSubmitted);
+    on<LoginTogglePasswordVisibility>(
+      (_, emit) {
+        emit(state.copyWith(hidePassword: !state.hidePassword));
+      },
+    );
   }
 
   final AuthRepository _authRepository;
@@ -31,7 +39,7 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
     if (email.trim().isEmpty) {
       emit(
         state.copyWith(
-          email: ErrorValidator(value: email, error: ValueEmpty()),
+          email: ErrorValidator(value: email, error: const ValueEmpty()),
         ),
       );
       return;
@@ -41,7 +49,8 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
     if (!email.isEmail) {
       emit(
         state.copyWith(
-          email: ErrorValidator(value: email, error: EmailInvalidFormat()),
+          email:
+              ErrorValidator(value: email, error: const EmailInvalidFormat()),
         ),
       );
       return;
@@ -59,7 +68,7 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
     if (password.trim().isEmpty) {
       emit(
         state.copyWith(
-          password: ErrorValidator(value: password, error: ValueEmpty()),
+          password: ErrorValidator(value: password, error: const ValueEmpty()),
         ),
       );
       return;
@@ -70,7 +79,8 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
     if (password.length < Constants.passwordMinLength) {
       emit(
         state.copyWith(
-          password: ErrorValidator(value: password, error: PasswordTooShort()),
+          password:
+              ErrorValidator(value: password, error: const PasswordTooShort()),
         ),
       );
       return;

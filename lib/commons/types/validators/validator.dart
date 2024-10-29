@@ -66,7 +66,7 @@ class ErrorValidator<T, E extends ValidatorError> extends Validator<T, E> {
 
 /// The [ValidatorError] class represents an error with a specific code.
 class ValidatorError {
-  ValidatorError(this.code);
+  const ValidatorError(this.code);
   final String code;
 }
 

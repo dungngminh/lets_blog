@@ -12,4 +12,3 @@ final class UserSessionAuthenticated extends UserSessionState {
 }
 
 final class UserSessionUnauthenticated extends UserSessionState {}
-

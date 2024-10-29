@@ -27,18 +27,16 @@ class HomeView extends StatelessWidget {
   }
 }
 
-
 class HomeGreeing extends StatelessWidget {
   const HomeGreeing({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return  Padding(
+    return Padding(
       padding: EdgeInsets.symmetric(horizontal: 16),
-      child: Row(children: [
-        Text(context.l10n.goodMorningLabel)
-        
-      ],),
+      child: Row(
+        children: [Text(context.l10n.goodMorningLabel)],
+      ),
     );
   }
 }

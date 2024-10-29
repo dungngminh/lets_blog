@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:developer';
 
 import 'package:appwrite/appwrite.dart';
 import 'package:appwrite/models.dart';
@@ -18,12 +17,7 @@ class AuthRepositoryImpl extends AuthRepository {
   final _user$ = StreamController<User?>();
 
   @override
-  Stream<User?> get user$ async* {
-    // unAuthenticated
-    yield null;
-    // yield controller
-    yield* _user$.stream;
-  }
+  Stream<User?> get user$ => _user$.stream;
 
   @override
   Future<Result<User, AuthError>> login({
@@ -45,11 +39,17 @@ class AuthRepositoryImpl extends AuthRepository {
 
   @override
   Future<Result<void, AuthError>> register({
+    required String name,
     required String email,
     required String password,
   }) {
     return _account
-        .create(email: email, password: password, userId: ID.unique())
+        .create(
+          name: name,
+          email: email,
+          password: password,
+          userId: ID.unique(),
+        )
         .then<Result<void, AuthError>>((value) => Result.ok(null))
         .onError<AppwriteException>(
           (error, stackTrace) => Result.error(error.authError),
@@ -69,7 +69,7 @@ class AuthRepositoryImpl extends AuthRepository {
       return Result.ok(user);
     }).onError<AppwriteException>(
       (error, stackTrace) {
-        log(error.type.toString());
+        _user$.add(null);
         return Result.error(error.authError);
       },
     );
